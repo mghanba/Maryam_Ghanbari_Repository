@@ -1,0 +1,37 @@
+import os
+import scipy.io as sio
+import csv
+
+path = 'path'
+files = [i for i in os.listdir(path) if os.path.isfile(os.path.join(path,i))]
+outCSV = '2-connected_state_vector.csv'
+for s in range(len(files)):
+    
+    with open(outCSV, 'a+') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        
+        filename = path + files[s]
+        #print filename
+        X = sio.loadmat(filename)
+        Y = X['A']
+        import numpy as np
+        test=np.zeros((19,111))
+        list=[]
+        list.append(files[s])
+        for j in range (111):
+            for i in range(19):
+                B = matrix (Y[i,j])
+                g = Graph (B)
+                test[i,j] = g.is_connected()
+                if test[i,j]==1:
+                    B = matrix (Y[i,j])
+                    g = Graph (B)
+                    biconnectedness = g.is_biconnected()  
+                    if biconnectedness == 1:
+                        list.append(2)
+                        break
+                    else:
+                        list.append(1)
+                        break
+        writer.writerow(list)
+csvfile.close()
